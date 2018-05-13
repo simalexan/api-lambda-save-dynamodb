@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "package": "aws cloudformation package --template-file template.yaml --output-template-file output.yaml --s3-bucket api-lambda-save-dynamodb-bucket",
+    "deploy": "aws cloudformation deploy --template-file output.yaml --stack-name api-lambda-save-dynamodb --capabilities CAPABILITY_IAM",
+    "qd": "npm run package && npm run deploy"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "Aleksandar Simovic",
+  "license": "MIT"
 }
