@@ -1,0 +1,87 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  TableName:
+    Type: String
+    Default: 'yourTableName'
+    Description: (Required) The name of the new DynamoDB table you want to create and save to. Minimum 3 characters
+    MinLength: 3
+    MinLength: 50
+    AllowedPattern: ^[A-Za-z]+$
+    ConstraintDescription: 'Must be characters only. No numbers allowed.'
+  CorsOrigin:
+    Type: String
+    Default: ''
+    Description: (Optional) Cross-origin resource sharing (CORS) Origin. You can specify a single origin, all "*" or leave empty and no CORS will be applied.
+    MaxLength: 250
+Conditions:
+  IsCorsDefined: !Not [!Equals [!Ref CorsOrigin, '']]
+Resources:
+  ApiSaver:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        !If
+          - IsCorsDefined
+          - 
+            AllowOrigin: !Join [ "", [ "'", !Ref CorsOrigin, "'" ] ]
+          - !Ref AWS::NoValue
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title:
+            Ref: AWS::StackName
+        paths:
+          /publish:
+            post:
+              responses: {}
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaSaver.Arn}/invocations
+  LambdaSaver:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs8.10
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+          IS_CORS: !Ref IsCorsDefined
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /save
+            Method: POST
+            RestApiId: !Ref ApiSaver
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      AttributeDefinitions:
+        -
+          AttributeName: !Sub "${TableName}Id"
+          AttributeType: "S"
+      KeySchema:
+        -
+          AttributeName: !Sub "${TableName}Id"
+          KeyType: "HASH"
+      ProvisionedThroughoutput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${ApiSaver}.execute-api.${AWS::Region}.amazonaws.com/${ApiSaver.Stage}/publish
+    Description: The URL of the API Gateway you invoke to save to your DynamoDB Table.
+  DynamoDBTableArn:
+    Value: !GetAtt DynamoDBTable.Arn
+    Description: The ARN of your DynamoDB Table
+  DynamoDBTableStreamArn:
+    Value: !GetAtt DynamoDBTable.StreamArn
+    Description: The ARN of your DynamoDB Table Stream
