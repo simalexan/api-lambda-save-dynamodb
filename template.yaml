@@ -6,9 +6,9 @@ Parameters:
     Default: 'yourTableName'
     Description: (Required) The name of the new DynamoDB table you want to create and save to. Minimum 3 characters
     MinLength: 3
-    MinLength: 50
+    MaxLength: 50
     AllowedPattern: ^[A-Za-z]+$
-    ConstraintDescription: 'Must be characters only. No numbers allowed.'
+    ConstraintDescription: 'Required parameter. Must be characters only. No numbers allowed.'
   CorsOrigin:
     Type: String
     Default: ''
@@ -33,7 +33,7 @@ Resources:
           title:
             Ref: AWS::StackName
         paths:
-          /publish:
+          /save:
             post:
               responses: {}
               x-amazon-apigateway-integration:
@@ -49,7 +49,8 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref TableName
-          IS_CORS: !Ref IsCorsDefined
+          IS_CORS: IsCorsDefined,
+          PRIMARY_KEY: !Sub ${TableName}Id
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
@@ -72,12 +73,14 @@ Resources:
         -
           AttributeName: !Sub "${TableName}Id"
           KeyType: "HASH"
-      ProvisionedThroughoutput:
+      ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
 Outputs:
   ApiUrl:
-    Value: !Sub https://${ApiSaver}.execute-api.${AWS::Region}.amazonaws.com/${ApiSaver.Stage}/publish
+    Value: !Sub https://${ApiSaver}.execute-api.${AWS::Region}.amazonaws.com/${ApiSaver.Stage}/save
     Description: The URL of the API Gateway you invoke to save to your DynamoDB Table.
   DynamoDBTableArn:
     Value: !GetAtt DynamoDBTable.Arn
