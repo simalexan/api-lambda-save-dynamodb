@@ -21,12 +21,6 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prod
-      Cors:
-        !If
-          - IsCorsDefined
-          - 
-            AllowOrigin: !Join [ "", [ "'", !Ref CorsOrigin, "'" ] ]
-          - !Ref AWS::NoValue
       DefinitionBody:
         swagger: 2.0
         info:
@@ -49,7 +43,8 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref TableName
-          IS_CORS: IsCorsDefined,
+          IS_CORS: IsCorsDefined
+          CORS_ORIGIN: !Ref CorsOrigin
           PRIMARY_KEY: !Sub ${TableName}Id
       Policies:
         - DynamoDBCrudPolicy:
@@ -80,7 +75,7 @@ Resources:
         StreamViewType: NEW_AND_OLD_IMAGES
 Outputs:
   ApiUrl:
-    Value: !Sub https://${ApiSaver}.execute-api.${AWS::Region}.amazonaws.com/${ApiSaver.Stage}/save
+    Value: !Sub https://${ApiSaver}.execute-api.${AWS::Region}.amazonaws.com/prod/save
     Description: The URL of the API Gateway you invoke to save to your DynamoDB Table.
   DynamoDBTableArn:
     Value: !GetAtt DynamoDBTable.Arn
