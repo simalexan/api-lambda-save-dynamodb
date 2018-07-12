@@ -3,4 +3,4 @@ npm_debug.log
 .vscode
 .DS_Store
 .idea
-output.yaml
+output.yml
