@@ -1,6 +1,6 @@
 {
   "name": "api-lambda-save-dynamodb",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,4 +15,3 @@
   "author": "Aleksandar Simovic <alexander.simovic@gmail.com>",
   "license": "MIT"
 }
- 
