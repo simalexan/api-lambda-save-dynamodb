@@ -7,8 +7,8 @@ Parameters:
     Description: (Required) The name of the new DynamoDB table you want to create and save to. Minimum 3 characters
     MinLength: 3
     MaxLength: 50
-    AllowedPattern: ^[A-Za-z]+$
-    ConstraintDescription: 'Required parameter. Must be characters only. No numbers allowed.'
+    AllowedPattern: ^[A-Za-z_]+$
+    ConstraintDescription: 'Required. Can be characters and underscore only. No numbers or special characters allowed.'
   CorsOrigin:
     Type: String
     Default: ''

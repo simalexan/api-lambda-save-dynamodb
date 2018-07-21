@@ -22,8 +22,12 @@ exports.handler = (event) => {
     return dynamoDb.put(params)
     .promise()
     .then(() => (processResponse(IS_CORS)))
-    .catch(err => {
-        console.log(err);
-        return processResponse(IS_CORS, 'dynamo-error', 500);
+    .catch(dbError => {
+        let errorResponse = `Error: Execution update, caused a Dynamodb error, please look at your logs.`;
+        if (dbError.code === 'ValidationException') {
+            if (dbError.message.includes('reserved keyword')) errorResponse = `Error: You're using AWS reserved keywords as attributes`;
+        }
+        console.log(dbError);
+        return processResponse(IS_CORS, errorResponse, 500);
     });
 };
