@@ -5,7 +5,7 @@
 
 This is a serverless component consisting of:
 
-- an API Gateway, receving request data
+- an API Gateway, receiving request data
 - a Lambda function, that processes that data and saves
 - a DynamoDB table, where all your data is stored.
 
