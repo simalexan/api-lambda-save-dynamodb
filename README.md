@@ -17,12 +17,13 @@ Aside from this main functionality, its important features are:
 
 It's a Nuts & Bolts application component for AWS Serverless Application Repository.
 
-## Latest Release - 1.0.2
+## Latest Release - 1.0.3
 
 Added a few fixes regarding datatable naming:
 
 - Enabled underscore `_` as an enabled character in the table name
 - Added a `ValidationException` Reserved Keywords error response reply
+- Changed the `Outputs` to actually have `DynamoDBTable` param as the table name
 
 ## Roadmap - Upcoming changes
 
