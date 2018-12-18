@@ -3,7 +3,6 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   TableName:
     Type: String
-    Default: 'yourTableName'
     Description: (Required) The name of the new DynamoDB table you want to create and save to. Minimum 3 characters
     MinLength: 3
     MaxLength: 50
@@ -77,9 +76,9 @@ Outputs:
   ApiUrl:
     Value: !Sub https://${ApiSaver}.execute-api.${AWS::Region}.amazonaws.com/prod/save
     Description: The URL of the API Gateway you invoke to save to your DynamoDB Table.
-  DynamoDBTableArn:
-    Value: !GetAtt DynamoDBTable.Arn
-    Description: The ARN of your DynamoDB Table
+  DynamoDBTable:
+    Value: !Ref TableName
+    Description: The name of your DynamoDB Table
   DynamoDBTableStreamArn:
     Value: !GetAtt DynamoDBTable.StreamArn
     Description: The ARN of your DynamoDB Table Stream
