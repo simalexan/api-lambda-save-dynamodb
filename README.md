@@ -17,7 +17,7 @@ Aside from this main functionality, its important features are:
 
 It's a Nuts & Bolts application component for AWS Serverless Application Repository.
 
-## Latest Release - 1.0.3
+## Latest Release - 1.1.0
 
 Added a few fixes regarding datatable naming:
 

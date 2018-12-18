@@ -1,6 +1,6 @@
 {
   "name": "api-lambda-save-dynamodb",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "qd": "npm run package && npm run deploy"
   },
   "config": {
-    "table_name": "randomNames"
+    "table_name": "desks"
   },
   "keywords": [],
   "author": "Aleksandar Simovic <alexander.simovic@gmail.com>",

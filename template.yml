@@ -16,24 +16,6 @@ Parameters:
 Conditions:
   IsCorsDefined: !Not [!Equals [!Ref CorsOrigin, '']]
 Resources:
-  ApiSaver:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: prod
-      DefinitionBody:
-        swagger: 2.0
-        info:
-          title:
-            Ref: AWS::StackName
-        paths:
-          /save:
-            post:
-              responses: {}
-              x-amazon-apigateway-integration:
-                httpMethod: POST
-                type: aws_proxy
-                uri:
-                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaSaver.Arn}/invocations
   LambdaSaver:
     Type: AWS::Serverless::Function
     Properties:
@@ -49,12 +31,16 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
       Events:
-        Api:
+        SaveApi:
           Type: Api
           Properties:
             Path: /save
             Method: POST
-            RestApiId: !Ref ApiSaver
+        SaveOptionsApi:
+          Type: Api
+          Properties:
+            Path: /save
+            Method: OPTIONS
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -74,7 +60,7 @@ Resources:
         StreamViewType: NEW_AND_OLD_IMAGES
 Outputs:
   ApiUrl:
-    Value: !Sub https://${ApiSaver}.execute-api.${AWS::Region}.amazonaws.com/prod/save
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/save
     Description: The URL of the API Gateway you invoke to save to your DynamoDB Table.
   DynamoDBTable:
     Value: !Ref TableName
