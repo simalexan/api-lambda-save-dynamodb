@@ -46,12 +46,10 @@ Resources:
     Properties:
       TableName: !Ref TableName
       AttributeDefinitions:
-        -
-          AttributeName: !Sub "${TableName}Id"
+        - AttributeName: !Sub "${TableName}Id"
           AttributeType: "S"
       KeySchema:
-        -
-          AttributeName: !Sub "${TableName}Id"
+        - AttributeName: !Sub "${TableName}Id"
           KeyType: "HASH"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
