@@ -1,6 +1,6 @@
-.node_modules
 npm_debug.log
 .vscode
 .DS_Store
 .idea
 output.yml
+node_modules
