@@ -25,6 +25,10 @@ Added a few fixes regarding datatable naming:
 - Added a `ValidationException` Reserved Keywords error response reply
 - Changed the `Outputs` to actually have `DynamoDBTable` param as the table name
 
+## Future Release
+
+Switch to AWS CDK
+
 ## Roadmap - Upcoming changes
 
 Here are the upcoming changes that I'll add to this serverless component:
