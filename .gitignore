@@ -4,3 +4,5 @@ npm_debug.log
 .idea
 output.yml
 node_modules
+.cdk
+.cdk.staging/
