@@ -1,0 +1,56 @@
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  viewerstable25A8B0A8:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: viewerId
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: viewerId
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      TableName: twitchViewers
+    Metadata:
+      aws:cdk:path: ApiLambdaDynamoDBStack/viewers-table/Resource
+  viewersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors: '"*"'
+    Metadata:
+      aws:cdk:path: ApiLambdaDynamoDBStack/viewersApi
+  SaveToDynamoDB:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src
+      Handler: index.handler
+      Runtime: nodejs8.10
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: viewerstable25A8B0A8
+          PRIMARY_KEY: viewerId
+      Events:
+        save:
+          Properties:
+            Method: POST
+            Path: /viewers
+            RestApiId: viewersApi
+          Type: Api
+        saveOptions:
+          Properties:
+            Method: OPTIONS
+            Path: /viewers
+            RestApiId: viewersApi
+          Type: Api
+      Policies: |-2
+        
+                - DynamoDBCrudPolicy:
+                    TableName: twitchViewers
+    Metadata:
+      aws:cdk:path: ApiLambdaDynamoDBStack/SaveToDynamoDB
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Modules: aws-cdk=0.32.0,@aws-cdk/assets=0.32.0,@aws-cdk/aws-applicationautoscaling=0.32.0,@aws-cdk/aws-autoscaling-common=0.32.0,@aws-cdk/aws-cloudwatch=0.32.0,@aws-cdk/aws-dynamodb=0.32.0,@aws-cdk/aws-ec2=0.32.0,@aws-cdk/aws-events=0.32.0,@aws-cdk/aws-iam=0.32.0,@aws-cdk/aws-kms=0.32.0,@aws-cdk/aws-lambda=0.32.0,@aws-cdk/aws-s3=0.32.0,@aws-cdk/aws-s3-notifications=0.32.0,@aws-cdk/aws-sam=0.32.0,@aws-cdk/aws-sqs=0.32.0,@aws-cdk/cdk=0.32.0,@aws-cdk/cx-api=0.32.0,@aws-cdk/region-info=0.32.0,jsii-runtime=node.js/v10.15.3

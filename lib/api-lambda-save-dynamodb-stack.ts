@@ -1,16 +1,19 @@
 import cdk = require('@aws-cdk/cdk');
-import { Function, AssetCode, Runtime } from '@aws-cdk/aws-lambda';
+import { CfnFunction, CfnApi } from '@aws-cdk/aws-sam';
+import { AssetCode  } from '@aws-cdk/aws-lambda';
 import { Table, AttributeType, BillingMode } from '@aws-cdk/aws-dynamodb';
-import { RestApi, LambdaIntegration, IResource, MockIntegration, PassthroughBehavior } from '@aws-cdk/aws-apigateway';
+//import { RestApi, LambdaIntegration, IResource, MockIntegration, PassthroughBehavior } from '@aws-cdk/aws-apigateway';
 
 export class ApiLambdaSaveDynamoDBStack extends cdk.Stack {
 
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const tableName = 'twitchViewers';
+
     const primaryKeyName = 'viewerId';
     const table = new Table(this, 'viewers-table', {
-      tableName: 'twitchViewers',
+      tableName: tableName,
       partitionKey: {
         name: primaryKeyName,
         type: AttributeType.String
@@ -18,26 +21,47 @@ export class ApiLambdaSaveDynamoDBStack extends cdk.Stack {
       billingMode: BillingMode.PayPerRequest
     });
 
-    const saveFunction = new Function(this, 'SaveToDynamoDB', {
-      code: new AssetCode('src'),
+    const api = new CfnApi(this, 'viewersApi', {
+      stageName: 'prod',
+      cors: '"*"'
+    });
+
+    new CfnFunction(this, 'SaveToDynamoDB', {
+      codeUri: new AssetCode('src').path,
       handler: 'index.handler',
-      runtime: Runtime.NodeJS10x,
+      runtime: 'nodejs8.10',
       environment: {
-        TABLE_NAME: table.tableName,
-        PRIMARY_KEY: primaryKeyName
+        variables: {
+          TABLE_NAME: table.tableName,
+          PRIMARY_KEY: primaryKeyName
+        }
+      },
+      policies: `
+        - DynamoDBCrudPolicy:
+            TableName: ${tableName}`,
+      events: {
+        save: {
+          type: 'Api',
+          properties: {
+            path: '/viewers',
+            method: 'POST',
+            restApiId: api.logicalId
+          }
+        },
+        saveOptions: {
+          type: 'Api',
+          properties: {
+            path: '/viewers',
+            method: 'OPTIONS',
+            restApiId: api.logicalId
+          }
+        }
       }
     });
-    table.grantReadWriteData(saveFunction);
-
-    const api = new RestApi(this, 'viewers'); // <API_URL>
-    const viewers = api.root.addResource('viewers'); // <API_URL>/viewers
-    const saveIntegration = new LambdaIntegration(saveFunction); // (Integrate)-> saveFunction
-    viewers.addMethod('POST', saveIntegration); // POST <API_URL>/viewers (Integrate)-> saveFunction
-    addCorsOptions(viewers);
   }
 }
 
-function addCorsOptions(apiResource: IResource) {
+/*function addCorsOptions(apiResource: IResource) {
   apiResource.addMethod('OPTIONS', new MockIntegration({
     integrationResponses: [{
       statusCode: '200',
@@ -63,4 +87,4 @@ function addCorsOptions(apiResource: IResource) {
         }
       }]
     });
-}
+}*/
