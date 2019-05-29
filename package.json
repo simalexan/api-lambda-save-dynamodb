@@ -2,9 +2,15 @@
   "name": "api-lambda-save-dynamodb",
   "version": "1.1.0",
   "description": "",
-  "main": "index.js",
+  "bin": {
+    "api-lambda-save-dynamodb": "bin/api-lambda-save-dynamodb.js"
+  },
   "scripts": {
-    "package": "aws cloudformation package --template-file template.yml --output-template-file output.yml --s3-bucket api-lambda-save-dynamodb-bucket",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "synth": "cdk synth --output=.",
+    "package": "aws cloudformation package --template-file ApiLambdaDynamoDBStack.template.yaml --output-template-file output.yml --s3-bucket api-lambda-save-dynamodb-bucket",
     "deploy": "aws cloudformation deploy --template-file output.yml --stack-name api-lambda-save-dynamodb --capabilities CAPABILITY_IAM --parameter-overrides TableName=$npm_package_config_table_name",
     "qd": "npm run package && npm run deploy"
   },
@@ -13,5 +19,19 @@
   },
   "keywords": [],
   "author": "Aleksandar Simovic <alexander.simovic@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "^0.32.0",
+    "@aws-cdk/aws-dynamodb": "^0.32.0",
+    "@aws-cdk/aws-iam": "^0.32.0",
+    "@aws-cdk/aws-lambda": "^0.32.0",
+    "@aws-cdk/aws-sam": "^0.32.0",
+    "@aws-cdk/cdk": "^0.32.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "aws-cdk": "^0.32.0",
+    "aws-sdk": "^2.464.0",
+    "typescript": "^3.4.5"
+  }
 }
