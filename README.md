@@ -23,6 +23,10 @@ Added a few fixes regarding datatable naming:
 - Changed the billing mode of the DynamoDB table to PAY_PER_REQUEST
 - Changed the StageName to `prod`
 
+## Future Release
+
+Switch to AWS CDK
+
 ## Roadmap - Upcoming changes
 
 Here are the upcoming changes that I'll add to this serverless component:
