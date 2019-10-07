@@ -10,12 +10,21 @@ Parameters:
     ConstraintDescription: 'Required. Can be characters and underscore only. No numbers or special characters allowed.'
   CorsOrigin:
     Type: String
-    Default: ''
+    Default: "'*'"
     Description: (Optional) Cross-origin resource sharing (CORS) Origin. You can specify a single origin, all "*" or leave empty and no CORS will be applied.
     MaxLength: 250
-Conditions:
-  IsCorsDefined: !Not [!Equals [!Ref CorsOrigin, '']]
 Resources:
+  SaveApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Cors:
+        AllowHeaders: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: !Ref CorsOrigin
+        MaxAge: "'3600'"
+        AllowMethods: "'OPTIONS,POST'"
+      EndpointConfiguration: REGIONAL
+      TracingEnabled: true
+      StageName: prod
   LambdaSaver:
     Type: AWS::Serverless::Function
     Properties:
@@ -24,7 +33,6 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref TableName
-          IS_CORS: IsCorsDefined
           CORS_ORIGIN: !Ref CorsOrigin
           PRIMARY_KEY: !Sub ${TableName}Id
       Policies:
@@ -36,29 +44,25 @@ Resources:
           Properties:
             Path: /save
             Method: POST
-        SaveOptionsApi:
-          Type: Api
-          Properties:
-            Path: /save
-            Method: OPTIONS
+            RestApiId: !Ref SaveApi
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref TableName
       AttributeDefinitions:
-        - AttributeName: !Sub "${TableName}Id"
-          AttributeType: "S"
+        - AttributeName: !Sub ${TableName}Id
+          AttributeType: S
       KeySchema:
-        - AttributeName: !Sub "${TableName}Id"
-          KeyType: "HASH"
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+        - AttributeName: !Sub ${TableName}Id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: True
       StreamSpecification:
-        StreamViewType: NEW_AND_OLD_IMAGES
+        StreamViewType: NEW_IMAGE
 Outputs:
   ApiUrl:
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/save
+    Value: !Sub https://${SaveApi}.execute-api.${AWS::Region}.amazonaws.com/prod/save
     Description: The URL of the API Gateway you invoke to save to your DynamoDB Table.
   DynamoDBTable:
     Value: !Ref TableName

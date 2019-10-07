@@ -15,19 +15,19 @@ Aside from this main functionality, its important features are:
 - Written in Node.js
 - Easily composable into your other app components by adding triggers to its DynamoDB table
 
-It's a Nuts & Bolts application component for AWS Serverless Application Repository.
-
-## Latest Release - 1.1.0
+## Latest Release - 2.0.0
 
 Added a few fixes regarding datatable naming:
 
-- Enabled underscore `_` as an enabled character in the table name
-- Added a `ValidationException` Reserved Keywords error response reply
-- Changed the `Outputs` to actually have `DynamoDBTable` param as the table name
+- Fixed CORS
+- Changed the billing mode of the DynamoDB table to PAY_PER_REQUEST
+- Changed the StageName to `prod`
 
 ## Roadmap - Upcoming changes
 
 Here are the upcoming changes that I'll add to this serverless component:
 
+- TypeScript
+- Potentially converting to an AWS CDK component on SAR
 - ESLint
 - Tests
