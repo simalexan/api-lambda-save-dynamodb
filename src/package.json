@@ -1,0 +1,13 @@
+{
+  "name": "api-lambda-save-dynamodb",
+  "version": "2.1.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "Aleksandar Simovic <alexander.simovic@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^3.4.0"
+  }
+}

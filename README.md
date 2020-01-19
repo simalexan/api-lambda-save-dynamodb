@@ -15,13 +15,9 @@ Aside from this main functionality, its important features are:
 - Written in Node.js
 - Easily composable into your other app components by adding triggers to its DynamoDB table
 
-## Latest Release - 2.0.0
+## Latest Release - 2.1.0
 
-Added a few fixes regarding datatable naming:
-
-- Fixed CORS
-- Changed the billing mode of the DynamoDB table to PAY_PER_REQUEST
-- Changed the StageName to `prod`
+Upgrading the Node.js release to 12.x LTS
 
 ## Future Release
 
