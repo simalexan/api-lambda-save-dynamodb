@@ -17,7 +17,7 @@ Aside from this main functionality, its important features are:
 
 ## Latest Release - 2.1.0
 
-Upgrading the Node.js release to 10.x
+Upgrading the Node.js release to 12.x LTS
 
 ## Future Release
 
