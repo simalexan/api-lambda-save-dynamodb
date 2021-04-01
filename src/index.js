@@ -7,7 +7,10 @@ const TABLE_NAME = process.env.TABLE_NAME,
   IS_CORS = true;
 
 exports.handler = async event => {
-  if (event.httpMethod === 'OPTIONS') {
+  
+  const method = event.requestContext.http.method;
+
+  if (method === 'OPTIONS') {
     return processResponse(IS_CORS);
   }
   if (!event.body) {
