@@ -14,7 +14,11 @@ exports.handler = async event => {
     return processResponse(IS_CORS, 'invalid', 400);
   }
   const item = JSON.parse(event.body);
-  item[PRIMARY_KEY] = uuidv4();
+  
+  //require user to provide an unique primary key
+  if(!item[PRIMARY_KEY])
+    return processResponse(IS_CORS, 'please provide unique primary key', 400);
+  
   const params = {
     TableName: TABLE_NAME,
     Item: item
@@ -30,4 +34,5 @@ exports.handler = async event => {
     console.log(error);
     return processResponse(IS_CORS, errorResponse, 500);
   }
+
 };
